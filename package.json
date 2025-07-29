@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "start:dev": "nodemon --exec ts-node src/server.ts",
+    "vercel-build": "prisma generate && npm run build",
     "seed": "ts-node scripts/seed.ts",
     "create-admin": "ts-node scripts/create-admin.ts",
     "prisma:generate": "prisma generate",
