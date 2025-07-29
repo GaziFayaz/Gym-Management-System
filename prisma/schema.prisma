@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TRAINER
+  TRAINEE
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  createdTrainers User[]          @relation("AdminTrainer")
+  adminId         String?
+  admin           User?           @relation("AdminTrainer", fields: [adminId], references: [id])
+  
+  assignedSchedules ClassSchedule[] @relation("TrainerSchedule")
+  bookings          Booking[]
+
+  @@map("users")
+}
+
+model ClassSchedule {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  startTime   DateTime
+  endTime     DateTime
+  maxTrainees Int      @default(10)
+  trainerId   String
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  trainer  User      @relation("TrainerSchedule", fields: [trainerId], references: [id])
+  bookings Booking[]
+
+  @@map("class_schedules")
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  traineeId  String
+  scheduleId String
+  status     BookingStatus @default(CONFIRMED)
+  bookedAt   DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  // Relations
+  trainee  User          @relation(fields: [traineeId], references: [id])
+  schedule ClassSchedule @relation(fields: [scheduleId], references: [id])
+
+  @@unique([traineeId, scheduleId])
+  @@map("bookings")
+}
