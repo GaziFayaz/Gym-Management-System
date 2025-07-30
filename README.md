@@ -50,6 +50,43 @@ A comprehensive gym class scheduling and membership management system built with
 - Class attendance tracking
 - User activity monitoring
 
+
+## 📐 Business Rules
+
+### Class Scheduling Rules
+- **Maximum 5 classes per day**: No more than 5 gym classes can be scheduled on any single day
+- **2-hour duration**: Each class must be exactly 2 hours long
+- **No trainer conflicts**: A trainer cannot be assigned to overlapping time slots
+- **Future scheduling only**: Classes can only be scheduled for future dates/times
+
+### Booking Rules
+- **Maximum capacity**: Each class can accommodate a maximum of 10 trainees
+- **No double booking**: A trainee cannot book the same class twice
+- **Future classes only**: Only future classes can be booked
+- **Cancellation window**: Bookings can only be cancelled at least 2 hours before the class starts
+- **Real-time availability**: Available slots are calculated in real-time
+
+### User Roles & Permissions
+
+#### Admin
+- Create and manage trainer accounts
+- Create and manage class schedules
+- View all bookings and user information
+- Full system access
+
+#### Trainer
+- View their assigned schedules
+- View attendees for their classes
+- Manage their profile
+
+#### Trainee
+- Register for an account
+- Book available classes
+- View their bookings and history
+- Cancel their bookings (within time limits)
+- Manage their profile
+
+
 ## 🛠 Technology Stack
 
 - **Backend Framework**: Express.js with TypeScript
@@ -62,106 +99,11 @@ A comprehensive gym class scheduling and membership management system built with
 - **Logging**: morgan
 - **Date Utilities**: date-fns
 
-## 📋 Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- Node.js (v16 or higher)
-- npm or yarn
-- PostgreSQL (v12 or higher)
-- Git
-
-## 🚀 Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd gym-management-system
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Setup environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-
-## ⚙️ Configuration
-
-Edit the `.env` file with your configuration:
-
-```env
-# Environment Configuration
-NODE_ENV=development
-
-# Server Configuration
-PORT=5000
-FRONTEND_URL=http://localhost:3000
-
-# Database Configuration
-DATABASE_URL="postgresql://username:password@localhost:5432/gym_management"
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-here
-JWT_EXPIRES_IN=7d
-
-# Bcrypt Configuration
-BCRYPT_ROUNDS=12
-```
-
-## 🗄️ Database Setup
-
-1. **Generate Prisma client**
-   ```bash
-   npm run prisma:generate
-   ```
-
-2. **Run database migrations**
-   ```bash
-   npm run prisma:migrate
-   ```
-
-3. **Seed the database (optional)**
-   ```bash
-   npm run prisma:seed
-   ```
-
-## 🏃‍♂️ Running the Application
-
-### Development Mode
-```bash
-npm run dev
-```
-
-### Production Mode
-```bash
-npm run build
-npm start
-```
-
-### Other Commands
-```bash
-# Lint code
-npm run lint
-
-# Format code
-npm run format
-
-# Run type checking
-npm run type-check
-
-# Reset database
-npm run prisma:reset
-```
-
 ## 📚 API Documentation
 
-### Base URL
+### Base URL (Live Hosted Link)
 ```
-https://gym-management-system-2hn3cvcbj-gazifayazs-projects.vercel.app
+https://gym-management-system-azure.vercel.app
 ```
 
 ### Authentication Endpoints
@@ -422,6 +364,174 @@ Authorization: Bearer <jwt-token>
 GET /health
 ```
 
+## 🧪 API Testing with Postman
+
+For easier API testing and development, a complete Postman collection is provided in the `postman/` folder.
+
+### Setup Instructions
+
+1. **Import the Collection**
+   - Open Postman
+   - Click "Import" button
+   - Select the file: `postman/Gym Management System API.postman_collection.json`
+   - The collection will be imported with all endpoints organized by modules
+
+2. **Configure Environment Variables**
+   - The collection includes pre-configured variables:
+     - `baseUrl`: Set to `http://localhost:5000` for local development
+     - `authToken`: Automatically populated after successful login
+     - `userId`, `scheduleId`, `bookingId`: Auto-populated from responses
+
+3. **Testing Workflow**
+   - Start with the **Authentication** folder to login and get your auth token
+   - The token will be automatically saved and used for subsequent requests
+   - Test endpoints in this order:
+     1. 🔐 Authentication (Login first)
+     2. 👥 Users (Create trainers, manage profiles)
+     3. 📅 Schedules (Create and manage schedules)
+     4. 📝 Bookings (Create and manage bookings)
+
+4. **Pre-request Scripts**
+   - Collection includes automatic token management
+   - IDs are automatically extracted and saved from responses
+   - No manual copying of IDs required between requests
+
+### Available Collections
+
+- **🏠 System**: Health checks and API root
+- **🔐 Authentication**: Login, logout, token verification
+- **👥 Users**: User management, profiles, trainer creation
+- **📅 Schedules**: Schedule CRUD operations
+- **📝 Bookings**: Booking management and history
+
+The Postman collection is kept in sync with the latest API changes and includes example data for testing.
+
+## 📊 Database Schema
+
+### User Table
+- Stores user information with role-based access
+- Passwords are securely hashed using bcrypt
+- Supports Admin, Trainer, and Trainee roles
+
+### ClassSchedule Table
+- Manages gym class schedules
+- Enforces business rules for timing and capacity
+- Links to trainers and tracks creation metadata
+
+### Booking Table
+- Tracks trainee bookings for classes
+- Manages booking status (CONFIRMED, CANCELLED)
+- Enforces capacity limits and prevents conflicts
+
+## 📄 Credentials
+
+### Admin
+- Email: admin@gym.com
+- Password: Abc123
+
+### Trainer
+- Email: trainer@gym.com
+- Password: Abc123
+
+### Trainee
+- Email: trainee@gym.com
+- Password: Abc123
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js (v16 or higher)
+- npm or yarn
+- PostgreSQL (v12 or higher)
+- Git
+
+## 🚀 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd gym-management-system
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Setup environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+
+## ⚙️ Configuration
+
+Edit the `.env` file with your configuration:
+
+```env
+# Environment Configuration
+NODE_ENV=development
+
+# Server Configuration
+PORT=5000
+FRONTEND_URL=http://localhost:3000
+
+# Database Configuration
+DATABASE_URL="postgresql://username:password@localhost:5432/gym_management"
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here
+JWT_EXPIRES_IN=7d
+
+# Bcrypt Configuration
+BCRYPT_ROUNDS=12
+```
+
+## 🗄️ Database Setup
+
+1. **Generate Prisma client**
+   ```bash
+   npm run prisma:generate
+   ```
+
+2. **Run database migrations**
+   ```bash
+   npm run prisma:migrate
+   ```
+
+3. **Seed the database (optional)**
+   ```bash
+   npm run prisma:seed
+   ```
+
+## 🏃‍♂️ Running the Application
+
+### Development Mode
+```bash
+npm run dev
+```
+
+### Production Mode
+```bash
+npm run build
+npm start
+```
+
+### Other Commands
+```bash
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+
+# Run type checking
+npm run type-check
+
+# Reset database
+npm run prisma:reset
+```
+
 ## 📁 Project Structure
 
 ```
@@ -467,67 +577,6 @@ gym-management-system/
 └── README.md
 ```
 
-## 📐 Business Rules
-
-### Class Scheduling Rules
-- **Maximum 5 classes per day**: No more than 5 gym classes can be scheduled on any single day
-- **2-hour duration**: Each class must be exactly 2 hours long
-- **No trainer conflicts**: A trainer cannot be assigned to overlapping time slots
-- **Future scheduling only**: Classes can only be scheduled for future dates/times
-
-### Booking Rules
-- **Maximum capacity**: Each class can accommodate a maximum of 10 trainees
-- **No double booking**: A trainee cannot book the same class twice
-- **Future classes only**: Only future classes can be booked
-- **Cancellation window**: Bookings can only be cancelled at least 2 hours before the class starts
-- **Real-time availability**: Available slots are calculated in real-time
-
-### User Roles & Permissions
-
-#### Admin
-- Create and manage trainer accounts
-- Create and manage class schedules
-- View all bookings and user information
-- Full system access
-
-#### Trainer
-- View their assigned schedules
-- View attendees for their classes
-- Manage their profile
-
-#### Trainee
-- Register for an account
-- Book available classes
-- View their bookings and history
-- Cancel their bookings (within time limits)
-- Manage their profile
-
-## 📊 Database Schema
-
-### User Table
-- Stores user information with role-based access
-- Passwords are securely hashed using bcrypt
-- Supports Admin, Trainer, and Trainee roles
-
-### ClassSchedule Table
-- Manages gym class schedules
-- Enforces business rules for timing and capacity
-- Links to trainers and tracks creation metadata
-
-### Booking Table
-- Tracks trainee bookings for classes
-- Manages booking status (CONFIRMED, CANCELLED)
-- Enforces capacity limits and prevents conflicts
-
-## 🔒 Security Features
-
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: bcrypt with configurable rounds
-- **Input Validation**: Comprehensive request validation
-- **SQL Injection Prevention**: Prisma ORM with prepared statements
-- **CORS Protection**: Configurable cross-origin resource sharing
-- **Helmet Security**: Security headers and protection
-- **Role-based Access**: Granular permission system
 
 ## 🧪 Testing
 
