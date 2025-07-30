@@ -15,11 +15,11 @@ router.post(
 router.post('/verify-token', AuthController.verifyToken);
 
 // First admin registration (remove this after creating first admin)
-router.post(
-  '/register-admin',
-  ValidationMiddleware.validateUserRegistration,
-  AuthController.registerAdmin
-);
+// router.post(
+//   '/register-admin',
+//   ValidationMiddleware.validateUserRegistration,
+//   AuthController.registerAdmin
+// );
 
 // Protected routes
 router.post('/logout', AuthMiddleware.authenticate, AuthController.logout);

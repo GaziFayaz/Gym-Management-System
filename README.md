@@ -161,21 +161,22 @@ npm run prisma:reset
 
 ### Base URL
 ```
-http://localhost:5000/api
+https://gym-management-system-2hn3cvcbj-gazifayazs-projects.vercel.app/api
 ```
 
 ### Authentication Endpoints
 
 #### Register User (Trainee)
 ```http
-POST /api/auth/register
+POST /api/users/register
 Content-Type: application/json
 
 {
+  "email": "trainee@gym.com",
+  "password": "Abc123",
   "firstName": "John",
-  "lastName": "Doe",
-  "email": "john.doe@example.com",
-  "password": "password123"
+  "lastName": "Trainee",
+  "role": "TRAINEE"
 }
 ```
 
@@ -185,37 +186,90 @@ POST /api/auth/login
 Content-Type: application/json
 
 {
-  "email": "john.doe@example.com",
-  "password": "password123"
+  "email": "admin@gym.com",
+  "password": "Abc123"
 }
+```
+
+#### Verify Token
+```http
+POST /api/auth/verify-token
+Content-Type: application/json
+Authorization: Bearer <jwt-token>
+```
+
+#### Logout
+```http
+POST /api/auth/logout
+Authorization: Bearer <jwt-token>
 ```
 
 ### User Management Endpoints
 
-#### Create Trainer (Admin only)
+#### Register Admin (Admin only)
 ```http
-POST /api/users
+POST /api/users/register-admin
 Authorization: Bearer <jwt-token>
 Content-Type: application/json
 
 {
-  "firstName": "Jane",
-  "lastName": "Smith",
-  "email": "jane.smith@example.com",
-  "password": "password123",
-  "role": "TRAINER"
+  "email": "admin1@gym.com",
+  "password": "Abc123",
+  "firstName": "System",
+  "lastName": "Admin",
+  "role": "ADMIN"
 }
-```
-
-#### Get All Users (Admin only)
-```http
-GET /api/users
-Authorization: Bearer <jwt-token>
 ```
 
 #### Get User Profile
 ```http
 GET /api/users/profile
+Authorization: Bearer <jwt-token>
+```
+
+#### Update Profile
+```http
+PUT /api/users/update-profile
+Authorization: Bearer <jwt-token>
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "lastName": "Name",
+  "email": "updated@gym.com"
+}
+```
+
+#### Get All Trainers (Admin only)
+```http
+GET /api/users/trainers
+Authorization: Bearer <jwt-token>
+```
+
+#### Get My Trainers (Admin only)
+```http
+GET /api/users/my-trainers
+Authorization: Bearer <jwt-token>
+```
+
+#### Create Trainer (Admin only)
+```http
+POST /api/users/trainers
+Authorization: Bearer <jwt-token>
+Content-Type: application/json
+
+{
+  "email": "trainer4@gym.com",
+  "password": "Abc123",
+  "firstName": "New",
+  "lastName": "Trainer",
+  "role": "TRAINER"
+}
+```
+
+#### Delete User (Admin only)
+```http
+DELETE /api/users/:userId
 Authorization: Bearer <jwt-token>
 ```
 
@@ -230,12 +284,17 @@ Content-Type: application/json
 {
   "title": "Morning Yoga",
   "description": "Relaxing yoga session",
-  "date": "2024-01-15",
+  "date": "2025-07-31",
   "startTime": "08:00",
   "endTime": "10:00",
-  "trainerId": "trainer-uuid",
-  "maxTrainees": 10
+  "trainerId": "cuid-trainer-id"
 }
+```
+
+#### Get All Schedules
+```http
+GET /api/schedules
+Authorization: Bearer <jwt-token>
 ```
 
 #### Get Available Schedules
@@ -244,9 +303,42 @@ GET /api/schedules/available
 Authorization: Bearer <jwt-token>
 ```
 
-#### Get My Schedules (Trainers)
+#### Get My Schedules (Trainers only)
 ```http
 GET /api/schedules/my
+Authorization: Bearer <jwt-token>
+```
+
+#### Get Schedules by Trainer (Admin or Trainer themselves)
+```http
+GET /api/schedules/trainer/:trainerId
+Authorization: Bearer <jwt-token>
+```
+
+#### Get Schedule by ID
+```http
+GET /api/schedules/:id
+Authorization: Bearer <jwt-token>
+```
+
+#### Update Schedule (Admin only)
+```http
+PUT /api/schedules/:id
+Authorization: Bearer <jwt-token>
+Content-Type: application/json
+
+{
+  "title": "Updated Morning Yoga",
+  "description": "Updated description",
+  "date": "2025-07-31",
+  "startTime": "09:00",
+  "endTime": "11:00"
+}
+```
+
+#### Delete Schedule (Admin only)
+```http
+DELETE /api/schedules/:id
 Authorization: Bearer <jwt-token>
 ```
 
@@ -259,25 +351,67 @@ Authorization: Bearer <jwt-token>
 Content-Type: application/json
 
 {
-  "scheduleId": "schedule-uuid"
+  "scheduleId": "cuid-schedule-id"
 }
 ```
 
-#### Get My Bookings
+#### Get All Bookings (Admin only)
+```http
+GET /api/bookings
+Authorization: Bearer <jwt-token>
+```
+
+#### Get My Bookings (Trainees only)
 ```http
 GET /api/bookings/my
 Authorization: Bearer <jwt-token>
 ```
 
-#### Get Upcoming Bookings
+#### Get My Upcoming Bookings (Trainees only)
 ```http
 GET /api/bookings/my/upcoming
 Authorization: Bearer <jwt-token>
 ```
 
-#### Cancel Booking
+#### Get My Booking History (Trainees only)
 ```http
-PUT /api/bookings/{bookingId}/cancel
+GET /api/bookings/my/history
+Authorization: Bearer <jwt-token>
+```
+
+#### Get Trainer's Schedule Bookings (Trainers only)
+```http
+GET /api/bookings/trainer/schedules
+Authorization: Bearer <jwt-token>
+```
+
+#### Get Specific Trainer's Schedule Bookings (Admin only)
+```http
+GET /api/bookings/trainer/:trainerId/schedules
+Authorization: Bearer <jwt-token>
+```
+
+#### Get Bookings by Schedule (Trainer/Admin only)
+```http
+GET /api/bookings/schedule/:scheduleId
+Authorization: Bearer <jwt-token>
+```
+
+#### Get Bookings by Trainee (Admin only)
+```http
+GET /api/bookings/trainee/:traineeId
+Authorization: Bearer <jwt-token>
+```
+
+#### Get Booking by ID (Booking owner or Admin)
+```http
+GET /api/bookings/:id
+Authorization: Bearer <jwt-token>
+```
+
+#### Cancel Booking (Booking owner or Admin)
+```http
+PUT /api/bookings/:id/cancel
 Authorization: Bearer <jwt-token>
 ```
 
