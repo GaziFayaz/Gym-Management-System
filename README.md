@@ -408,20 +408,40 @@ The Postman collection is kept in sync with the latest API changes and includes 
 
 ## 📊 Database Schema
 
-### User Table
+### Entity Relationship Diagram
+![Database Schema](diagram-export-7-30-2025-11_44_13-PM.png)
+
+### Table Descriptions
+
+#### User Table
 - Stores user information with role-based access
 - Passwords are securely hashed using bcrypt
 - Supports Admin, Trainer, and Trainee roles
+- **Primary Key**: `id` (string)
+- **Fields**: adminId, email, password, firstName, lastName, role, createdAt, updatedAt
 
-### ClassSchedule Table
+#### ClassSchedule Table (class_schedules)
 - Manages gym class schedules
 - Enforces business rules for timing and capacity
 - Links to trainers and tracks creation metadata
+- **Primary Key**: `id` (string)
+- **Foreign Key**: `trainerId` (references users.id)
+- **Fields**: title, description, date, startTime, endTime, maxTrainees, createdBy, createdAt, updatedAt
 
-### Booking Table
+#### Booking Table (bookings)
 - Tracks trainee bookings for classes
 - Manages booking status (CONFIRMED, CANCELLED)
 - Enforces capacity limits and prevents conflicts
+- **Primary Key**: `id` (string)
+- **Foreign Keys**: 
+  - `scheduleId` (references class_schedules.id)
+  - `traineeId` (references users.id)
+- **Fields**: status, bookedAt, updatedAt
+
+### Relationships
+- **Users → ClassSchedules**: One trainer can have many schedules (1:N)
+- **ClassSchedules → Bookings**: One schedule can have many bookings (1:N)  
+- **Users → Bookings**: One trainee can have many bookings (1:N)
 
 ## 📄 Credentials
 
