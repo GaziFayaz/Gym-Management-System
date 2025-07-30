@@ -66,10 +66,6 @@ dist/
 build/
 *.js.map
 
-# TypeScript build outputs
-lib/
-types/
-
 # IDE and Editor files
 .vscode/
 .idea/
