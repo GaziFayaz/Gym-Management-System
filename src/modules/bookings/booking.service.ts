@@ -333,9 +333,9 @@ export class BookingService {
       ],
     });
 
-    return schedules.map((schedule: any) => ({
+    return schedules.map((schedule) => ({
       ...schedule,
-      attendees: schedule.bookings,
+      attendees: schedule.bookings.map((booking) => booking.trainee),
       availableSlots: schedule.maxTrainees - schedule.bookings.length,
     }));
   }
