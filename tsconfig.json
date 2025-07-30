@@ -1,37 +1,30 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020"],
     "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["./*"],
-      "@/modules/*": ["./modules/*"],
-      "@/utils/*": ["./utils/*"],
-      "@/middleware/*": ["./middleware/*"],
-      "@/types/*": ["./types/*"],
-      "@/config/*": ["./config/*"]
-    },
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "esModuleInterop": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*.ts",  // Add the path to your TypeScript files
+    "test/**/*.ts"  // If you have tests or other directories
   ],
   "exclude": [
     "node_modules",
-    "dist"
-  ],
-  "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  }
+    "dist"  // Exclude your build folder
+  ]
 }
