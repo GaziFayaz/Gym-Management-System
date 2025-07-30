@@ -161,7 +161,7 @@ npm run prisma:reset
 
 ### Base URL
 ```
-https://gym-management-system-2hn3cvcbj-gazifayazs-projects.vercel.app/api
+https://gym-management-system-2hn3cvcbj-gazifayazs-projects.vercel.app
 ```
 
 ### Authentication Endpoints
