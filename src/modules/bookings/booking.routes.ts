@@ -12,33 +12,23 @@ const createBookingValidation = [
   body('scheduleId')
     .notEmpty()
     .withMessage('Schedule ID is required')
-    .isUUID()
-    .withMessage('Schedule ID must be a valid UUID'),
 ];
 
 const idValidation = [
   param('id')
-    .isUUID()
-    .withMessage('Booking ID must be a valid UUID'),
 ];
 
 const scheduleIdValidation = [
   param('scheduleId')
-    .isUUID()
-    .withMessage('Schedule ID must be a valid UUID'),
 ];
 
 const traineeIdValidation = [
   param('traineeId')
-    .isUUID()
-    .withMessage('Trainee ID must be a valid UUID'),
 ];
 
 const trainerIdValidation = [
   param('trainerId')
     .optional()
-    .isUUID()
-    .withMessage('Trainer ID must be a valid UUID'),
 ];
 
 // Routes

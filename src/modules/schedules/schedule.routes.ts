@@ -41,8 +41,6 @@ const createScheduleValidation = [
   body('trainerId')
     .notEmpty()
     .withMessage('Trainer ID is required')
-    .isUUID()
-    .withMessage('Trainer ID must be a valid UUID'),
   
 //   body('maxTrainees')
 //     .optional()
@@ -78,8 +76,6 @@ const updateScheduleValidation = [
   
   body('trainerId')
     .optional()
-    .isUUID()
-    .withMessage('Trainer ID must be a valid UUID'),
   
   // body('maxTrainees')
   //   .optional()
@@ -89,14 +85,10 @@ const updateScheduleValidation = [
 
 const idValidation = [
   param('id')
-    .isUUID()
-    .withMessage('Schedule ID must be a valid UUID'),
 ];
 
 const trainerIdValidation = [
   param('trainerId')
-    .isUUID()
-    .withMessage('Trainer ID must be a valid UUID'),
 ];
 
 // Routes
