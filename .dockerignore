@@ -19,6 +19,8 @@ build
 # Ignore Docker files
 Dockerfile
 .dockerignore
+docker-compose.yml
+docker-compose.override.yml
 
 # Ignore git
 .git

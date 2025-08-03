@@ -270,8 +270,6 @@ services:
       - "5000:5000"
     env_file:
       - .env  # This will be your production.env on the server
-    depends_on:
-      - db
   # ... rest of the file remains the same
 ```
 
@@ -502,6 +500,75 @@ docker-compose logs -f
 
 # Access container shell
 docker-compose exec app sh
+```
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+#### 1. "nodemon: not found" Error
+**Problem**: Development container can't find nodemon when starting.
+```
+/bin/sh: nodemon: not found
+```
+
+**Solution**: This happens when the container builds the production stage instead of the development stage. Ensure your `docker-compose.override.yml` specifies the correct target:
+
+```yaml
+services:
+  app:
+    build:
+      target: base  # This ensures dev dependencies are included
+```
+
+#### 2. Changes Not Reflecting in Container
+**Problem**: Code changes aren't automatically updating in the container.
+
+**Solution**: Check that bind mounts are configured correctly in `docker-compose.override.yml`:
+```yaml
+volumes:
+  - .:/app
+  - /app/node_modules
+```
+
+#### 3. Database Connection Issues
+**Problem**: App can't connect to database.
+
+**Solutions**:
+- Check your `.env` file has correct `DATABASE_URL`
+- For local database: ensure you're using the service name `db` as hostname
+- For remote database: verify connection string is accessible from container
+
+#### 4. Port Already in Use
+**Problem**: `Error: bind: address already in use`
+
+**Solution**:
+```bash
+# Find process using port 5000
+netstat -ano | findstr :5000
+
+# Kill the process (replace PID with actual process ID)
+taskkill /PID <PID> /F
+
+# Or use different port in .env file
+PORT=5001
+```
+
+#### 5. Build Cache Issues
+**Problem**: Dependencies not updating despite changes to package.json
+
+**Solution**: Force rebuild without cache
+```bash
+docker-compose build --no-cache
+docker-compose up --build
+```
+
+#### 6. Permission Issues (Linux/MacOS)
+**Problem**: Permission denied errors when accessing files.
+
+**Solution**: Add user configuration to Dockerfile if needed, or adjust file permissions:
+```bash
+sudo chown -R $USER:$USER .
 ```
 
 ---
