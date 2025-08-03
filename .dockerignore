@@ -1,0 +1,25 @@
+# Ignore dependencies
+node_modules
+
+# Ignore environment files
+.env
+.env.development
+.env.production
+.env.local
+
+# Ignore logs
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# Ignore build output
+dist
+build
+
+# Ignore Docker files
+Dockerfile
+.dockerignore
+
+# Ignore git
+.git
+.gitignore
