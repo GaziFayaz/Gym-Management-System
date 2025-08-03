@@ -215,6 +215,141 @@ docker run -p 5000:5000 \
   gym-management-system
 ```
 
+## Docker Hub Deployment
+
+### Overview
+
+Docker Hub is a cloud-based registry service where you can store and distribute your Docker images. This section covers how to upload images and deploy them in production.
+
+### Setup Docker Hub Account
+
+1. **Create Account**: Sign up at [hub.docker.com](https://hub.docker.com)
+2. **Login from CLI**:
+   ```bash
+   docker login
+   # Enter your Docker Hub username and password
+   ```
+
+### Image Naming and Tagging Strategy
+
+For our project, we'll use this naming convention:
+- **Repository**: `yourusername/gym-management-system`
+- **Tags**: 
+  - `latest` - Latest stable production version
+  - `v1.0.0` - Specific version numbers
+
+### Building and Pushing Images
+
+#### For Production Release:
+
+```bash
+# Build production image with specific tag
+docker build -t yourusername/gym-management-system:latest .
+docker build -t yourusername/gym-management-system:v1.0.0 .
+
+# Push both tags
+docker push yourusername/gym-management-system:latest
+docker push yourusername/gym-management-system:v1.0.0
+```
+
+### Using Images from Docker Hub in Production
+
+Once your images are on Docker Hub, deploy them using the secure approach:
+
+#### Update docker-compose.yml for Production
+
+When deploying to production, modify your `docker-compose.yml` to use the pre-built image:
+
+```yaml
+version: '3.8'
+services:
+  app:
+    image: yourusername/gym-management-system:latest  # Use pre-built image
+    # build: .  # Comment out the build line
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env  # This will be your production.env on the server
+    depends_on:
+      - db
+  # ... rest of the file remains the same
+```
+
+#### Deploy to Production Server
+
+There are two secure ways to provide environment variables to your production container:
+
+**Method 1: Using a production.env file (Recommended)**
+
+```bash
+# On production server:
+# 1. Create a production.env file with your production secrets
+cat > production.env << EOF
+DATABASE_URL="postgresql://prod-user:prod-password@prod-host:5432/gym_prod"
+JWT_SECRET="your-super-secure-production-jwt-secret"
+JWT_EXPIRES_IN="7d"
+PORT=5000
+NODE_ENV="production"
+CORS_ORIGIN="https://your-production-frontend.com"
+BCRYPT_SALT_ROUNDS=12
+API_VERSION="v1"
+EOF
+
+# 2. Pull and run with the production env file
+docker pull yourusername/gym-management-system:latest
+docker-compose --env-file production.env -f docker-compose.yml up -d
+```
+
+**Method 2: Using environment flags (Alternative)**
+
+```bash
+# Pull the image
+docker pull yourusername/gym-management-system:latest
+
+# Run with environment variables passed as flags
+docker run -d \
+  --name gym-app \
+  -p 5000:5000 \
+  -e DATABASE_URL="postgresql://prod-user:prod-password@prod-host:5432/gym_prod" \
+  -e JWT_SECRET="your-super-secure-production-jwt-secret" \
+  -e JWT_EXPIRES_IN="7d" \
+  -e NODE_ENV="production" \
+  -e PORT="5000" \
+  -e CORS_ORIGIN="https://your-production-frontend.com" \
+  -e BCRYPT_SALT_ROUNDS="12" \
+  -e API_VERSION="v1" \
+  yourusername/gym-management-system:latest
+```
+
+**Important Security Notes:**
+- ⚠️ **Never commit production.env to version control**
+- ⚠️ **Store production secrets securely** (use your cloud provider's secret management)
+- ⚠️ **Use strong, unique passwords and secrets** for production
+
+### Complete Workflow
+
+Here's the complete workflow from development to production:
+
+```bash
+# 1. Development
+docker-compose up --build                    # Local development
+
+# 2. Build and test production image locally
+docker-compose -f docker-compose.yml build   # Build production image
+docker-compose -f docker-compose.yml up      # Test production image locally
+
+# 3. Tag and push to Docker Hub
+docker tag gym-management-system yourusername/gym-management-system:v1.0.0
+docker tag gym-management-system yourusername/gym-management-system:latest
+docker push yourusername/gym-management-system:v1.0.0
+docker push yourusername/gym-management-system:latest
+
+# 4. Deploy to production server
+# On production server:
+docker pull yourusername/gym-management-system:latest
+docker-compose -f docker-compose.yml up -d
+```
+
 ## Troubleshooting
 
 ### Common Issues
@@ -325,31 +460,48 @@ No need to install Node.js, PostgreSQL, or manage versions!
 
 ## Quick Reference
 
-### Start Development
+### Development Commands
 ```bash
+# Start development environment
 docker-compose up --build
-```
 
-### Add Package
-```bash
+# Start with local database
+docker-compose up --build --profile postgres
+
+# Add new package
 docker-compose exec app npm install <package>
 docker-compose up --build
-```
 
-### Database Migration
-```bash
+# Database operations
 docker-compose exec app npx prisma migrate dev
+docker-compose exec app npx prisma generate
 ```
 
-### Production Build
+### Production Commands
 ```bash
+# Build and test production image locally
 docker-compose -f docker-compose.yml up --build
+
+# Build and push to Docker Hub
+docker build -t yourusername/gym-management-system:latest .
+docker push yourusername/gym-management-system:latest
+
+# Deploy on production server
+docker pull yourusername/gym-management-system:latest
+docker-compose -f docker-compose.yml up -d
 ```
 
-### Clean Reset
+### Troubleshooting Commands
 ```bash
+# Clean reset
 docker-compose down -v
 docker system prune -a
+
+# View logs
+docker-compose logs -f
+
+# Access container shell
+docker-compose exec app sh
 ```
 
 ---
