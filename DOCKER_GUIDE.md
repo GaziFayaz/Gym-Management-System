@@ -571,6 +571,38 @@ docker-compose up --build
 sudo chown -R $USER:$USER .
 ```
 
+#### 7. Live Reload Not Working
+**Problem**: Nodemon doesn't restart server when files change.
+
+**Solutions**:
+1. **Check Volume Mounts**: Ensure full project is mounted correctly:
+   ```yaml
+   volumes:
+     - .:/app          # Mount entire project
+     - /app/node_modules   # Exclude node_modules
+     - /app/dist           # Exclude dist folder
+   ```
+
+2. **Verify Nodemon Configuration**: Check `nodemon.json` exists with correct settings:
+   ```json
+   {
+     "watch": ["src", "prisma"],
+     "ext": "ts,js,json",
+     "legacyWatch": true,
+     "env": {
+       "NODE_ENV": "development"
+     }
+   }
+   ```
+
+3. **Check Container Logs**: Verify nodemon is watching the correct paths:
+   ```bash
+   docker-compose logs app
+   ```
+   Look for: `[nodemon] watching path(s): src/**/* prisma/**/*`
+
+**✅ Current Status**: Live reload functionality is working correctly. Nodemon 3.1.10 properly detects file changes and restarts the server automatically.
+
 ---
 
 *This guide covers the complete Docker workflow for the Gym Management System. For questions or issues, refer to the troubleshooting section or consult the team.*

@@ -152,8 +152,8 @@ firebase-debug.log
 .aws/
 
 # Docker
-docker-compose.override.yml
 .dockerignore.local
+docker-compose.local.yml
 
 # Terraform
 *.tfstate

@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      target: base  # Use the base stage which has dev dependencies
+    image: gym-management-system:development
+    command: npm run start:dev
+    volumes:
+      - .:/app                    # Mount entire project directory
+      - /app/node_modules         # Exclude node_modules (anonymous volume)
+      - /app/dist                 # Exclude dist folder
