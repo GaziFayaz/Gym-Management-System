@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    image: gym-management-system
+    image: gazifayaz/gym-management-system:production
     ports:
       - "5000:5000"
     env_file:
