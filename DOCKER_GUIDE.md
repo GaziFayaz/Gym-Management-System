@@ -275,54 +275,57 @@ services:
 
 #### Deploy to Production Server
 
-There are two secure ways to provide environment variables to your production container:
+Create environment file in production server:
 
-**Method 1: Using a production.env file (Recommended)**
-
-```bash
-# On production server:
-# 1. Create a production.env file with your production secrets
-cat > production.env << EOF
-DATABASE_URL="postgresql://prod-user:prod-password@prod-host:5432/gym_prod"
-JWT_SECRET="your-super-secure-production-jwt-secret"
-JWT_EXPIRES_IN="7d"
+**File: `/opt/gym-app/production.env`**
+```env
+DATABASE_URL=postgresql://prod-user:secret@your-db-host:5432/gymdb
+JWT_SECRET=your-super-secure-production-secret
+NODE_ENV=production
 PORT=5000
-NODE_ENV="production"
-CORS_ORIGIN="https://your-production-frontend.com"
-BCRYPT_SALT_ROUNDS=12
-API_VERSION="v1"
-EOF
-
-# 2. Pull and run with the production env file
-docker pull yourusername/gym-management-system:latest
-docker-compose --env-file production.env -f docker-compose.yml up -d
+CORS_ORIGIN=https://your-frontend-domain.com
 ```
 
-**Method 2: Using environment flags (Alternative)**
-
+**Deploy:**
 ```bash
-# Pull the image
+# Pull the latest image
 docker pull yourusername/gym-management-system:latest
 
-# Run with environment variables passed as flags
+# Run with production env variables
 docker run -d \
   --name gym-app \
+  --restart unless-stopped \
   -p 5000:5000 \
-  -e DATABASE_URL="postgresql://prod-user:prod-password@prod-host:5432/gym_prod" \
-  -e JWT_SECRET="your-super-secure-production-jwt-secret" \
-  -e JWT_EXPIRES_IN="7d" \
-  -e NODE_ENV="production" \
-  -e PORT="5000" \
-  -e CORS_ORIGIN="https://your-production-frontend.com" \
-  -e BCRYPT_SALT_ROUNDS="12" \
-  -e API_VERSION="v1" \
+  --env-file /etc/gym-app/production.env \
   yourusername/gym-management-system:latest
 ```
 
-**Important Security Notes:**
-- ⚠️ **Never commit production.env to version control**
-- ⚠️ **Store production secrets securely** (use your cloud provider's secret management)
-- ⚠️ **Use strong, unique passwords and secrets** for production
+#### Deploy through CI/CD Pipeline
+
+Integrate the following steps into your CI/CD pipeline using github workflows:
+
+```bash
+# .github/workflows/deploy.yml
+name: Deploy to Production
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and Push Image
+        run: |
+          docker build -t yourusername/gym-management-system:latest .
+          docker push yourusername/gym-management-system:latest
+      
+      - name: Deploy to Server
+        run: |
+          ssh production-server "docker pull yourusername/gym-management-system:latest"
+          ssh production-server "docker stop gym-app || true"
+          ssh production-server "docker run -d --name gym-app ..."
+```
 
 ### Complete Workflow
 
@@ -344,8 +347,16 @@ docker push yourusername/gym-management-system:latest
 
 # 4. Deploy to production server
 # On production server:
+# Pull the latest image
 docker pull yourusername/gym-management-system:latest
-docker-compose -f docker-compose.yml up -d
+
+# Run with production env variables
+docker run -d \
+  --name gym-app \
+  --restart unless-stopped \
+  -p 5000:5000 \
+  --env-file /etc/gym-app/production.env \
+  yourusername/gym-management-system:latest
 ```
 
 ## Troubleshooting
