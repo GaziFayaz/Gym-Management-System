@@ -254,36 +254,22 @@ docker push yourusername/gym-management-system:v1.0.0
 
 ### Using Images from Docker Hub in Production
 
-Once your images are on Docker Hub, deploy them using the secure approach:
-
-#### Update docker-compose.yml for Production
-
-When deploying to production, modify your `docker-compose.yml` to use the pre-built image:
-
-```yaml
-version: '3.8'
-services:
-  app:
-    image: yourusername/gym-management-system:latest  # Use pre-built image
-    # build: .  # Comment out the build line
-    ports:
-      - "5000:5000"
-    env_file:
-      - .env  # This will be your production.env on the server
-  # ... rest of the file remains the same
-```
-
 #### Deploy to Production Server
 
 Create environment file in production server:
 
-**File: `/opt/gym-app/production.env`**
-```env
+```bash
+# Create the directory for the app
+mkdir -p /opt/gym-app
+
+# Create the environment file
+cat <<EOF > /opt/gym-app/production.env
 DATABASE_URL=postgresql://prod-user:secret@your-db-host:5432/gymdb
 JWT_SECRET=your-super-secure-production-secret
 NODE_ENV=production
 PORT=5000
 CORS_ORIGIN=https://your-frontend-domain.com
+EOF
 ```
 
 **Deploy:**
